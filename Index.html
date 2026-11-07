@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <base target="_top">
+  <!-- Membuat ukuran halaman menyesuaikan lebar layar HP maupun laptop -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grand Hotel | Pengalaman Menginap Istimewa</title>
+
+  <style>
+    /* =========================
+       1. WARNA DAN PENGATURAN DASAR
+       Variabel CSS memudahkan kita mengganti warna seluruh website.
+       ========================= */
+    :root {
+      --navy: #0b1c2c;
+      --navy-light: #142b40;
+      --gold: #c9a45c;
+      --gold-dark: #a98235;
+      --cream: #f7f4ed;
+      --white: #ffffff;
+      --text: #182331;
+      --muted: #697586;
+      --border: #e7e2d8;
+      --shadow: 0 14px 40px rgba(11, 28, 44, 0.10);
+    }
+
+    /* Menghitung padding dan border ke dalam ukuran elemen agar layout mudah diatur */
+    * { box-sizing: border-box; }
+
+    /* Mengaktifkan scroll halus ketika menu mengarah ke bagian lain halaman */
+    html { scroll-behavior: smooth; }
+
+    /* Mengatur font, warna latar, dan jarak dasar seluruh halaman */
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Membuat gambar tidak melewati lebar elemen pembungkusnya */
+    img { display: block; max-width: 100%; }
+
+    /* Menyamakan gaya tautan agar tidak bergaris bawah secara default */
+    a { color: inherit; text-decoration: none; }
+
+    /* Membatasi lebar konten agar rapi pada layar besar */
+    .container { width: min(1120px, calc(100% - 40px)); margin-inline: auto; }
+
+    /* =========================
+       2. NAVIGASI / HEADER
+       ========================= */
+    .site-header {
+      position: sticky; /* Header tetap terlihat saat halaman digulir */
+      top: 0;
+      z-index: 20; /* Header berada di atas elemen halaman lain */
+      background: rgba(11, 28, 44, 0.97);
+      color: var(--white);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+
+    .brand-mark { color: var(--gold); font-size: 1.7rem; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      font-size: .92rem;
+    }
+
+    .nav-links a { color: #e8edf2; transition: color .2s ease; }
+    .nav-links a:hover { color: var(--gold); }
+
+    .menu-toggle {
+      display: none; /* Tombol menu baru ditampilkan pada layar kecil */
+      border: 1px solid rgba(255,255,255,.25);
+      background: transparent;
+      color: white;
+      border-radius: 10px;
+      padding: 8px 11px;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    /* Gaya tombol utama yang digunakan berulang di beberapa bagian */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 8px;
+      padding: 12px 18px;
+      background: var(--gold);
+      color: var(--navy);
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s ease, transform .2s ease;
+    }
+
+    .btn:hover { background: #dfbd79; transform: translateY(-1px); }
+    .btn-outline { background: transparent; border: 1px solid var(--gold); color: var(--navy); }
+    .btn-outline:hover { background: var(--gold); }
+
+    /* =========================
+       3. HERO / BAGIAN PEMBUKA
+       Gambar latar bisa diganti dengan foto hotel milik sendiri.
+       ========================= */
+    .hero {
+      min-height: 570px;
+      display: flex;
+      align-items: center;
+      color: white;
+      background:
+        linear-gradient(90deg, rgba(6,18,29,.88) 0%, rgba(6,18,29,.60) 48%, rgba(6,18,29,.10) 100%),
+        url("https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=2000&q=85") center/cover;
+    }
+
+    .hero-content { max-width: 690px; padding: 76px 0 110px; }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: .78rem;
+      letter-spacing: 2.6px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    h1, h2, h3 { line-height: 1.2; }
+    .hero h1 {
+      margin: 16px 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem); /* Ukuran judul menyesuaikan layar */
+      font-weight: 500;
+      letter-spacing: -.8px;
+    }
+
+    .hero p { max-width: 540px; color: #e4e9ee; font-size: 1.05rem; }
+
+    /* =========================
+       4. FORM PENCARIAN KAMAR
+       Saat ini form hanya demo UI; belum mengecek database.
+       ========================= */
+    .search-wrap { position: relative; z-index: 2; margin-top: -48px; }
+
+    .search-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr .8fr auto;
+      gap: 14px;
+      align-items: end;
+      padding: 22px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+    .field label { font-size: .82rem; font-weight: 700; color: var(--navy); }
+    .field input, .field select {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 11px;
+      border: 1px solid #d8dce1;
+      border-radius: 7px;
+      background: white;
+      color: var(--text);
+      font: inherit;
+    }
+
+    .field input:focus, .field select:focus {
+      outline: 2px solid rgba(201,164,92,.45);
+      border-color: var(--gold-dark);
+    }
+
+    /* =========================
+       5. BAGIAN JUDUL DAN KARTU KAMAR
+       ========================= */
+    .section { padding: 76px 0; }
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section-heading h2 {
+      margin: 7px 0 0;
+      color: var(--navy);
+      font: 500 clamp(1.9rem, 3vw, 2.7rem) Georgia, serif;
+    }
+
+    .section-heading p { margin: 8px 0 0; color: var(--muted); }
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .room-card {
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: 0 6px 20px rgba(11,28,44,.045);
+      transition: transform .22s ease, box-shadow .22s ease;
+    }
+
+    .room-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+
+    .room-image { width: 100%; height: 220px; object-fit: cover; }
+    .room-body { padding: 20px; }
+    .room-body h3 { margin: 0 0 8px; font: 500 1.35rem Georgia, serif; color: var(--navy); }
+    .room-meta { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: .85rem; }
+    .room-description { min-height: 48px; color: var(--muted); font-size: .92rem; margin: 14px 0; }
+    .room-bottom { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .price { color: var(--navy); font-weight: 700; }
+    .price small { display: block; color: var(--muted); font-weight: 400; font-size: .78rem; }
+
+    /* =========================
+       6. BAGIAN KEUNGGULAN HOTEL
+       ========================= */
+    .features { background: #eee8dc; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .feature {
+      padding: 25px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(11,28,44,.07);
+      border-radius: 12px;
+    }
+    .feature-icon { font-size: 1.7rem; }
+    .feature h3 { color: var(--navy); margin: 12px 0 7px; }
+    .feature p { color: var(--muted); margin: 0; font-size: .93rem; }
+
+    /* =========================
+       7. FOOTER
+       ========================= */
+    .site-footer { padding: 34px 0; background: var(--navy); color: #e8edf2; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .footer-inner p { margin: 5px 0 0; color: #b8c2cd; font-size: .88rem; }
+
+    /* Area pesan untuk menampilkan hasil pencarian demo kepada pengunjung */
+    .notice {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: #fff8e8;
+      border: 1px solid #ead7a9;
+      color: #5e491e;
+      border-radius: 8px;
+      font-size: .92rem;
+    }
+    .notice.show { display: block; }
+
+
+
+    /* Detail kamar: layout foto, informasi, fasilitas, dan panel harga */
+    .room-detail-page { padding: 44px 0 76px; background: var(--cream); }
+    .detail-back { display:inline-block; margin-bottom:22px; color:var(--navy); font-weight:700; }
+    .detail-gallery { display:grid; grid-template-columns:1.4fr 1fr; gap:14px; }
+    .detail-gallery img { width:100%; height:250px; object-fit:cover; border-radius:14px; }
+    .detail-gallery img:first-child { height:514px; grid-row:span 2; }
+    .detail-columns { display:grid; grid-template-columns:1.3fr .7fr; gap:24px; margin-top:24px; align-items:start; }
+    .detail-info, .detail-price-card { background:#fff; border:1px solid var(--border); border-radius:15px; padding:26px; box-shadow:var(--shadow); }
+    .detail-info h1 { font:500 clamp(2rem,4vw,3rem) Georgia,serif; color:var(--navy); margin:8px 0 14px; }
+    .detail-meta { display:flex; flex-wrap:wrap; gap:18px; color:var(--muted); padding-bottom:18px; border-bottom:1px solid var(--border); }
+    .detail-info h2 { font-size:1.1rem; color:var(--navy); margin:24px 0 12px; }
+    .detail-description { color:var(--muted); }
+    .amenities-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+    .amenity-item { background:#faf9f6; border:1px solid var(--border); padding:11px; border-radius:8px; font-size:.9rem; }
+    .detail-price-card { position:sticky; top:100px; }
+    .detail-price { font-size:1.8rem; font-weight:700; color:var(--navy); }
+    .detail-price small { font-size:.85rem; color:var(--muted); font-weight:400; }
+    .detail-price-card p { color:var(--muted); font-size:.9rem; }
+    .detail-price-card .btn { width:100%; margin-top:12px; }
+    .room-card-actions { display:flex; flex-direction:column; gap:7px; min-width:120px; }
+    .room-card .room-detail-button { width:100%; padding:9px 12px; }
+    .book-button-text { border:1.5px solid var(--gold-dark); background:#fff; color:var(--navy); border-radius:7px; font:inherit; font-size:.86rem; font-weight:700; cursor:pointer; padding:9px 12px; transition:.2s; }
+    .book-button-text:hover { background:var(--gold); border-color:var(--gold); color:var(--navy); }
+    .room-status { display:inline-flex; align-items:center; gap:6px; border-radius:30px; padding:4px 10px; font-size:.78rem; font-weight:700; margin:0 0 10px; }
+    .status-available { background:#e6f5eb; color:#17683a; }
+    .status-full { background:#fff0d8; color:#8b5200; }
+    .status-maintenance { background:#fde8e8; color:#a32121; }
+    .admin-section { background:#fff; border-top:1px solid var(--border); }
+    .admin-panel { background:#fbfaf7; border:1px solid var(--border); border-radius:12px; padding:20px; margin-top:20px; }
+    .admin-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+    .admin-field label { display:block; font-size:.85rem; font-weight:700; margin-bottom:5px; }
+    .admin-field input,.admin-field select,.admin-field textarea { width:100%; border:1px solid var(--border); border-radius:7px; padding:10px; font:inherit; background:white; }
+    .admin-note { color:var(--muted); font-size:.88rem; }
+    @media(max-width:700px) { .admin-grid { grid-template-columns:1fr; } }
+    [hidden] { display:none !important; }
+    /* Jangan sembunyikan seluruh <main>, karena portal login berada di dalamnya. Sembunyikan hanya bagian website publik. */
+    @media(max-width:800px) {
+      .detail-columns { grid-template-columns:1fr; }
+      .detail-price-card { position:static; }
+    }
+    @media(max-width:540px) {
+      .detail-gallery { grid-template-columns:1fr 1fr; gap:8px; }
+      .detail-gallery img { height:120px; }
+      .detail-gallery img:first-child { height:248px; }
+      .detail-info,.detail-price-card { padding:20px; }
+      .amenities-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .room-card-actions { width:100%; }
+    }
+
+    /* =========================
+       FORM BOOKING DAN RINGKASAN
+       ========================= */
+    .booking-section { background: #fff; }
+    .booking-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr);
+      gap: 26px;
+      align-items: start;
+    }
+    .booking-summary, .booking-form, .booking-confirmation {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .booking-summary > img { width: 100%; height: 240px; object-fit: cover; }
+    .booking-summary-body { padding: 24px; }
+    .booking-summary h3, .booking-form h3 { color: var(--navy); margin: 6px 0 10px; font: 500 1.55rem Georgia, serif; }
+    .booking-summary-body > p { color: var(--muted); font-size: .92rem; margin: 0 0 22px; }
+    .summary-line, .summary-total { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--border); font-size: .92rem; }
+    .summary-line span, .summary-note { color: var(--muted); }
+    .summary-total { margin-top: 4px; align-items: center; color: var(--navy); font-weight: 700; font-size: 1rem; }
+    .summary-total strong { color: var(--gold-dark); font-size: 1.25rem; }
+    .summary-note { font-size: .8rem !important; line-height: 1.5; margin: 16px 0 0 !important; }
+    .booking-form { padding: 28px; }
+    .booking-form h3 { font-size: 1.35rem; margin: 0 0 18px; }
+    .form-subheading { padding-top: 24px; margin-top: 24px !important; border-top: 1px solid var(--border); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .field-full { grid-column: 1 / -1; }
+    .required { color: #b54732; }
+    .optional { color: var(--muted); font-weight: 400; }
+    .booking-consent { display: flex; gap: 10px; margin: 22px 0; padding: 13px 14px; background: #f5f8fb; border-radius: 9px; color: var(--muted); font-size: .85rem; }
+    .booking-consent span { color: var(--gold-dark); font-size: 1.15rem; }
+    .booking-consent p { margin: 0; }
+    .booking-submit { width: 100%; min-height: 48px; }
+    .form-disclaimer { text-align: center; color: var(--muted); font-size: .78rem; margin: 12px 0 0; }
+    .booking-error { display: none; margin: 0 0 14px; color: #9f2d20; background: #fff1ef; border: 1px solid #f1c4be; border-radius: 8px; padding: 11px 13px; font-size: .9rem; }
+    .booking-error.show { display: block; }
+    .booking-confirmation { margin-top: 28px; padding: 34px; text-align: center; }
+    .confirmation-icon { display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 18px; border-radius: 50%; background: #e4f4e8; color: #287a42; font-size: 2rem; font-weight: 700; }
+    .booking-confirmation h2 { margin: 8px 0; color: var(--navy); font: 500 clamp(1.8rem, 3vw, 2.5rem) Georgia, serif; }
+    .booking-confirmation > p { color: var(--muted); }
+    .confirmation-code { display: flex; flex-direction: column; gap: 5px; max-width: 360px; margin: 22px auto; padding: 18px; border: 1px solid var(--border); background: var(--cream); border-radius: 12px; }
+    .confirmation-code span { color: var(--muted); font-size: .85rem; }
+    .confirmation-code strong { color: var(--navy); font-size: 1.5rem; letter-spacing: 1px; }
+    .confirmation-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 650px; margin: 0 auto; text-align: left; }
+    .detail-item { padding: 13px; border: 1px solid var(--border); border-radius: 9px; }
+    .detail-item span { display: block; color: var(--muted); font-size: .8rem; margin-bottom: 4px; }
+    .detail-item strong { color: var(--navy); overflow-wrap: anywhere; }
+    .confirmation-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    [hidden] { display: none !important; }
+
+    /* =========================
+       9. RESPONSIVE UNTUK TABLET DAN HP
+       Aturan ini aktif ketika layar berukuran 800px atau lebih kecil.
+       ========================= */
+    @media (max-width: 800px) {
+      .nav { min-height: 68px; }
+      .menu-toggle { display: inline-flex; }
+      .nav-links {
+        display: none; /* Menu disembunyikan sebelum tombol menu ditekan */
+        position: absolute;
+        top: 68px;
+        left: 0;
+        right: 0;
+        padding: 18px 20px 22px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 17px;
+        background: var(--navy);
+        border-top: 1px solid rgba(255,255,255,.1);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links .btn { width: 100%; }
+      .hero { min-height: 510px; background-position: 58% center; }
+      .hero-content { padding: 65px 0 90px; }
+      .search-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .room-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .feature-grid { grid-template-columns: 1fr; }
+      .booking-layout { grid-template-columns: 1fr; }
+      .booking-summary > img { height: 260px; }
+    }
+
+    /* Aturan layar kecil: elemen ditumpuk agar tidak sempit di HP */
+    @media (max-width: 540px) {
+      .container { width: min(100% - 28px, 1120px); }
+      .hero { min-height: 490px; }
+      .hero-content { padding: 54px 0 78px; }
+      .hero h1 { font-size: clamp(2.25rem, 11vw, 3.2rem); }
+      .hero p { font-size: .96rem; }
+      .search-wrap { margin-top: -34px; }
+      .search-panel { grid-template-columns: 1fr; padding: 17px; gap: 13px; }
+      .section { padding: 55px 0; }
+      .section-heading { align-items: start; flex-direction: column; gap: 12px; }
+      .room-grid { grid-template-columns: 1fr; }
+      .room-image { height: 230px; }
+      .room-description { min-height: 0; }
+      .room-bottom { align-items: start; flex-direction: column; }
+      .room-bottom .btn { width: 100%; }
+      .footer-inner { align-items: start; flex-direction: column; }
+      .booking-form { padding: 20px; }
+      .form-grid { grid-template-columns: 1fr; gap: 14px; }
+      .field-full { grid-column: auto; }
+      .booking-summary-body { padding: 20px; }
+      .booking-confirmation { padding: 24px 18px; }
+      .confirmation-details { grid-template-columns: 1fr; }
+    }
+
+    /* ===== Tambahan untuk versi Apps Script: panel pembayaran & cek booking ===== */
+    .pay-box{max-width:650px;margin:22px auto 0;padding:18px;border:1px solid #ead7a9;background:#fff8e8;border-radius:12px;text-align:left}
+    .pay-box h3{margin:0 0 8px;color:var(--navy);font:500 1.25rem Georgia,serif}
+    .pay-box dl{display:grid;grid-template-columns:140px 1fr;gap:6px 10px;margin:10px 0;font-size:.92rem}
+    .pay-box dt{color:var(--muted)}.pay-box dd{margin:0;color:var(--navy);font-weight:700;overflow-wrap:anywhere}
+    .pay-box .upload-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+    .pay-box input[type=file]{flex:1;min-width:200px}
+    .pill{display:inline-block;border-radius:30px;padding:4px 11px;font-size:.78rem;font-weight:700;background:#edf0f2;color:#44525d;margin:0 3px}
+    .pill.ok{background:#e6f5eb;color:#17683a}.pill.bad{background:#fde8e8;color:#a32121}.pill.wait{background:#e7f0fa;color:#285d8f}
+    .panel-msg{max-width:650px;margin:16px auto 0;padding:12px 14px;border-radius:9px;background:var(--cream);color:var(--navy);font-size:.92rem}
+    .panel-msg.err{background:#fff1ef;color:#9f2d20}
+    .lookup-form{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;max-width:760px}
+    @media(max-width:700px){.lookup-form{grid-template-columns:1fr}.pay-box dl{grid-template-columns:1fr}}
+    .loading-note{color:var(--muted);font-size:.85rem}
+  </style>
+
+</head>
+
+<body>
+  <!-- HEADER: logo dan menu utama website -->
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#beranda" aria-label="Grand Hotel - Beranda">
+        <span class="brand-mark">♛</span>
+        <span>Grand Hotel</span>
+      </a>
+
+      <!-- Tombol ini membuka/menutup menu pada HP -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-expanded="false">☰</button>
+
+      <nav class="nav-links" id="navLinks" aria-label="Navigasi utama">
+        <a href="#beranda">Beranda</a>
+        <a href="#kamar">Kamar</a>
+        <a href="#keunggulan">Keunggulan</a>
+        <a href="#cek-booking">Cek Booking</a>
+        <a href="#kontak">Kontak</a>
+        <a class="btn" href="#cari-kamar">Booking Sekarang</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO: bagian pertama yang dilihat pengunjung -->
+    <section class="hero" id="beranda">
+      <div class="container">
+        <div class="hero-content">
+          <span class="eyebrow">Luxury stay · Exceptional service</span>
+          <h1>Pengalaman Menginap yang Tak Terlupakan</h1>
+          <p>Nikmati kenyamanan, kemewahan, dan pelayanan terbaik di Grand Hotel. Tempat sempurna untuk beristirahat, berbisnis, atau sekadar melepas penat.</p>
+          <a class="btn" href="#cari-kamar">Temukan Kamar <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM pencarian: untuk sementara menampilkan pesan demo -->
+    <section class="container search-wrap" id="cari-kamar" aria-label="Cari kamar">
+      <form class="search-panel" id="searchForm">
+        <div class="field">
+          <label for="checkIn">Check-in</label>
+          <input type="date" id="checkIn" name="checkIn" required>
+        </div>
+        <div class="field">
+          <label for="checkOut">Check-out</label>
+          <input type="date" id="checkOut" name="checkOut" required>
+        </div>
+        <div class="field">
+          <label for="guests">Jumlah tamu</label>
+          <select id="guests" name="guests">
+            <option value="1">1 tamu</option>
+            <option value="2" selected>2 tamu</option>
+            <option value="3">3 tamu</option>
+            <option value="4">4 tamu</option>
+          </select>
+        </div>
+        <button class="btn" type="submit">Cek Kamar</button>
+      </form>
+      <!-- JavaScript akan menampilkan informasi pencarian di area ini -->
+      <div class="notice" id="searchNotice" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- DAFTAR KAMAR: data saat ini masih contoh statis -->
+    <section class="section" id="kamar">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Pilihan akomodasi</span>
+            <h2>Kamar Pilihan Kami</h2>
+            <p>Rasakan kenyamanan di kamar yang dirancang untuk kebutuhan Anda.</p>
+          </div>
+          <a href="#cari-kamar">Cari tanggal menginap <span aria-hidden="true">→</span></a>
+        </div>
+
+        <div class="room-grid">
+          <!-- Kartu kamar 1: Standard Room -->
+          <article class="room-card">
+            <img class="room-image" src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=900&q=80" alt="Interior Standard Room dengan tempat tidur nyaman" loading="lazy">
+            <div class="room-body">
+              <h3>Standard Room</h3>
+              <span class="room-status status-available" data-status-for="Standard Room">● Tersedia</span>
+              <div class="room-meta"><span data-count-for="Standard Room" class="loading-note">Memuat ketersediaan…</span></div>
+              <div class="room-meta"><span data-cap-slot>♙ 2 tamu</span><span>▣ 1 Double Bed</span></div>
+              <p class="room-description">Kamar nyaman dengan fasilitas utama untuk perjalanan singkat maupun bisnis.</p>
+              <div class="room-bottom">
+                <div class="price">Rp300.000 <small>per malam</small></div>
+                <div class="room-card-actions"><button class="btn btn-outline room-detail-button" type="button" data-detail-room="Standard Room">Lihat Detail</button><button class="book-button-text book-button" type="button" data-room="Standard Room">Pilih Kamar</button></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Kartu kamar 2: Deluxe Room -->
+          <article class="room-card">
+            <img class="room-image" src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80" alt="Interior Deluxe Room dengan desain elegan" loading="lazy">
+            <div class="room-body">
+              <h3>Deluxe Room</h3>
+              <span class="room-status status-available" data-status-for="Deluxe Room">● Tersedia</span>
+              <div class="room-meta"><span data-count-for="Deluxe Room" class="loading-note">Memuat ketersediaan…</span></div>
+              <div class="room-meta"><span data-cap-slot>♙ 2 tamu</span><span>▣ 1 King Bed</span></div>
+              <p class="room-description">Ruang lebih luas dengan desain elegan untuk pengalaman menginap premium.</p>
+              <div class="room-bottom">
+                <div class="price">Rp450.000 <small>per malam</small></div>
+                <div class="room-card-actions"><button class="btn btn-outline room-detail-button" type="button" data-detail-room="Deluxe Room">Lihat Detail</button><button class="book-button-text book-button" type="button" data-room="Deluxe Room">Pilih Kamar</button></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Kartu kamar 3: Family Room -->
+          <article class="room-card">
+            <img class="room-image" src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80" alt="Interior Family Room yang luas" loading="lazy">
+            <div class="room-body">
+              <h3>Family Room</h3>
+              <span class="room-status status-available" data-status-for="Family Room">● Tersedia</span>
+              <div class="room-meta"><span data-count-for="Family Room" class="loading-note">Memuat ketersediaan…</span></div>
+              <div class="room-meta"><span data-cap-slot>♙ 4 tamu</span><span>▣ 2 Double Bed</span></div>
+              <p class="room-description">Pilihan untuk keluarga dengan ruang lega dan kenyamanan maksimal.</p>
+              <div class="room-bottom">
+                <div class="price">Rp700.000 <small>per malam</small></div>
+                <div class="room-card-actions"><button class="btn btn-outline room-detail-button" type="button" data-detail-room="Family Room">Lihat Detail</button><button class="book-button-text book-button" type="button" data-room="Family Room">Pilih Kamar</button></div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- Detail kamar ditampilkan saat tombol Lihat Detail ditekan -->
+    <section class="room-detail-page" id="roomDetailPage" hidden>
+      <div class="container">
+        <a class="detail-back" href="#kamar" id="backToRooms">← Kembali ke Daftar Kamar</a>
+        <div class="detail-gallery">
+          <img id="detailMainPhoto" src="" alt="Foto utama kamar">
+          <img id="detailSidePhotoOne" src="" alt="Foto tambahan kamar">
+          <img id="detailSidePhotoTwo" src="" alt="Foto tambahan kamar">
+        </div>
+        <div class="detail-columns">
+          <article class="detail-info">
+            <span class="eyebrow">Detail Akomodasi</span>
+            <h1 id="detailRoomName">Deluxe Room</h1>
+            <div class="detail-meta"><span id="detailCapacity"></span><span id="detailBed"></span><span>◇ Bebas asap rokok</span></div>
+            <h2>Tentang Kamar</h2>
+            <p class="detail-description" id="detailRoomDescription"></p>
+            <h2>Fasilitas Kamar</h2>
+            <div class="amenities-grid" id="detailAmenities"></div>
+            <h2>Informasi Menginap</h2>
+            <p class="detail-description">Check-in mulai pukul 14.00 dan check-out paling lambat pukul 12.00. Permintaan khusus menunggu konfirmasi pihak hotel.</p>
+          </article>
+          <aside class="detail-price-card">
+            <span class="eyebrow">Harga Kamar</span>
+            <div class="detail-price"><span id="detailRoomPrice"></span> <small>/ malam</small></div>
+            <p>Harga per malam untuk kamar pilihan Anda.</p>
+            <div class="summary-line"><span>Kapasitas</span><strong id="detailCapacityShort"></strong></div>
+            <div class="summary-line"><span>Tempat tidur</span><strong id="detailBedShort"></strong></div>
+            <button class="btn" type="button" id="detailBookButton">Pesan Kamar Ini →</button>
+            <p>Harga dan ketersediaan akhir perlu diverifikasi sebelum booking dikonfirmasi.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM PEMESANAN: disembunyikan saat awal; muncul setelah pengguna memilih kamar. -->
+    <section class="section booking-section" id="form-booking" hidden>
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Reservasi Anda</span>
+            <h2>Form Pemesanan</h2>
+            <p>Lengkapi data berikut untuk memesan kamar. Setelah itu Anda akan menerima instruksi pembayaran.</p>
+          </div>
+        </div>
+
+        <div class="booking-layout">
+          <aside class="booking-summary">
+            <img id="summaryRoomImage" src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80" alt="Foto kamar pilihan">
+            <div class="booking-summary-body">
+              <span class="eyebrow">Kamar pilihan</span>
+              <h3 id="summaryRoomName">Deluxe Room</h3>
+              <p id="summaryRoomDescription">Ruang lebih luas dengan desain elegan untuk pengalaman menginap premium.</p>
+              <div class="summary-line"><span>Harga per malam</span><strong id="summaryRoomPrice">Rp450.000</strong></div>
+              <div class="summary-line"><span>Lama menginap</span><strong id="summaryNights">0 malam</strong></div>
+              <div class="summary-total"><span>Estimasi total</span><strong id="summaryTotal">Rp0</strong></div>
+              <p class="summary-note">*Total dihitung ulang oleh sistem saat booking dibuat. Booking dikonfirmasi setelah pembayaran diverifikasi hotel.</p>
+            </div>
+          </aside>
+
+          <form class="booking-form" id="bookingForm">
+            <h3>Data Pemesan</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="guestName">Nama lengkap <span class="required">*</span></label>
+                <input type="text" id="guestName" name="guestName" placeholder="Masukkan nama lengkap" autocomplete="name" required>
+              </div>
+              <div class="field">
+                <label for="guestPhone">Nomor WhatsApp <span class="required">*</span></label>
+                <input type="tel" id="guestPhone" name="guestPhone" placeholder="Contoh: 081234567890" autocomplete="tel" required>
+              </div>
+              <div class="field field-full">
+                <label for="guestEmail">Email <span class="optional">(opsional)</span></label>
+                <input type="email" id="guestEmail" name="guestEmail" placeholder="nama@email.com" autocomplete="email">
+              </div>
+            </div>
+
+            <h3 class="form-subheading">Detail Menginap</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="bookingCheckIn">Check-in <span class="required">*</span></label>
+                <input type="date" id="bookingCheckIn" name="bookingCheckIn" required>
+              </div>
+              <div class="field">
+                <label for="bookingCheckOut">Check-out <span class="required">*</span></label>
+                <input type="date" id="bookingCheckOut" name="bookingCheckOut" required>
+              </div>
+              <div class="field">
+                <label for="bookingGuests">Jumlah tamu <span class="required">*</span></label>
+                <select id="bookingGuests" name="bookingGuests" required>
+                  <option value="1">1 tamu</option>
+                  <option value="2" selected>2 tamu</option>
+                  <option value="3">3 tamu</option>
+                  <option value="4">4 tamu</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="bookingRoom">Tipe kamar <span class="required">*</span></label>
+                <select id="bookingRoom" name="bookingRoom" required>
+                  <option value="Standard Room">Standard Room</option>
+                  <option value="Deluxe Room" selected>Deluxe Room</option>
+                  <option value="Family Room">Family Room</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="booking-consent">
+              <span aria-hidden="true">ⓘ</span>
+              <p>Pastikan nama, nomor WhatsApp, dan tanggal menginap sudah benar sebelum melanjutkan.</p>
+            </div>
+            <div class="booking-error" id="bookingError" role="alert" aria-live="polite"></div>
+            <button class="btn booking-submit" type="submit">Pesan Sekarang <span aria-hidden="true">→</span></button>
+            <p class="form-disclaimer">Kamar ditahan sementara sampai batas waktu pembayaran. Pembayaran dilakukan lewat transfer bank setelah booking dibuat.</p>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STATUS BOOKING & PEMBAYARAN: diisi oleh JavaScript -->
+    <section class="section booking-section" id="statusSection" hidden>
+      <div class="container">
+        <a class="detail-back" href="#beranda" id="statusBack" style="display:inline-block;margin-bottom:6px">← Kembali ke beranda</a>
+        <section class="booking-confirmation" id="bookingPanel" aria-live="polite"></section>
+      </div>
+    </section>
+
+    <!-- CEK STATUS BOOKING -->
+    <section class="section" id="cek-booking">
+      <div class="container">
+        <div class="section-heading"><div><span class="eyebrow">Sudah memesan?</span><h2>Cek Status Booking</h2><p>Masukkan kode booking dan nomor WhatsApp untuk melihat status, instruksi pembayaran, atau mengunggah bukti transfer.</p></div></div>
+        <form class="lookup-form" id="lookupForm">
+          <div class="field"><label for="lookupCode">Kode booking</label><input id="lookupCode" placeholder="GHT-XXXXXX" autocomplete="off" required maxlength="20"></div>
+          <div class="field"><label for="lookupPhone">Nomor WhatsApp</label><input id="lookupPhone" type="tel" placeholder="081234567890" required></div>
+          <button class="btn" type="submit" id="lookupBtn">Cek Status</button>
+        </form>
+        <div class="booking-error" id="lookupError" role="alert" style="margin-top:14px"></div>
+      </div>
+    </section>
+
+    <!-- KEUNGGULAN: informasi singkat tentang layanan hotel -->
+    <section class="section features" id="keunggulan">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">Kenyamanan Anda prioritas kami</span>
+            <h2>Menginap dengan Lebih Istimewa</h2>
+            <p>Detail kecil yang membuat perjalanan Anda terasa lebih nyaman.</p>
+          </div>
+        </div>
+        <div class="feature-grid">
+          <article class="feature">
+            <span class="feature-icon" aria-hidden="true">✧</span>
+            <h3>Fasilitas Berkualitas</h3>
+            <p>Nikmati fasilitas yang dirancang untuk mendukung kenyamanan selama menginap.</p>
+          </article>
+          <article class="feature">
+            <span class="feature-icon" aria-hidden="true">◷</span>
+            <h3>Proses Booking Mudah</h3>
+            <p>Pilih kamar dan tanggal menginap dengan alur pemesanan yang sederhana.</p>
+          </article>
+          <article class="feature">
+            <span class="feature-icon" aria-hidden="true">♡</span>
+            <h3>Pelayanan Ramah</h3>
+            <p>Tim hotel siap membantu kebutuhan informasi dan pemesanan Anda.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER: informasi penutup dan kontak -->
+  <footer class="site-footer" id="kontak">
+    <div class="container footer-inner">
+      <div>
+        <a class="brand" href="#beranda"><span class="brand-mark">♛</span><span>Grand Hotel</span></a>
+        <p>Kenyamanan dan pengalaman menginap yang berkesan.</p>
+      </div>
+      <div>
+        <strong>Hubungi Kami</strong>
+        <p>WhatsApp: nomor hotel akan ditambahkan</p>
+        <p>Alamat: alamat hotel akan ditambahkan</p>
+        <p><a href="<?= baseUrl ?>?page=admin" target="_top" style="text-decoration:underline;color:var(--gold)">Login Admin</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================================
+    // WEBSITE TAMU GRAND HOTEL - terhubung ke Code.gs (Apps Script)
+    // =========================================================
+    const $ = function (id) { return document.getElementById(id); };
+
+    // ---------- Komunikasi dengan server ----------
+    function call(fn) {
+      const args = Array.prototype.slice.call(arguments, 1);
+      return new Promise(function (resolve, reject) {
+        const runner = google.script.run
+          .withSuccessHandler(function (r) {
+            if (r && r.ok) resolve(r.data);
+            else reject(new Error((r && r.error) || "Permintaan gagal."));
+          })
+          .withFailureHandler(function (e) {
+            reject(new Error((e && e.message) || "Koneksi ke server gagal. Coba lagi."));
+          });
+        runner[fn].apply(runner, args);
+      });
+    }
+    function setHash(h) { try { history.replaceState(null, "", h); } catch (e) { /* diabaikan di iframe */ } }
+    function scrollToId(id) { const e = $(id); if (e) e.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    function showError(box, msg) { box.textContent = msg || ""; box.classList.toggle("show", !!msg); }
+
+    // ---------- 1. Menu responsif ----------
+    const menuToggle = $("menuToggle");
+    const navLinks = $("navLinks");
+    menuToggle.addEventListener("click", function () {
+      const open = navLinks.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(open));
+      menuToggle.setAttribute("aria-label", open ? "Tutup menu" : "Buka menu");
+      menuToggle.textContent = open ? "✕" : "☰";
+    });
+    navLinks.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute("aria-label", "Buka menu");
+        menuToggle.textContent = "☰";
+      });
+    });
+
+    // ---------- 2. Tanggal minimal ----------
+    const checkInInput = $("checkIn");
+    const checkOutInput = $("checkOut");
+    function formatTanggalInput(t) {
+      return t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+    }
+    const tanggalHariIni = formatTanggalInput(new Date());
+    checkInInput.min = tanggalHariIni;
+    checkOutInput.min = tanggalHariIni;
+    checkInInput.addEventListener("change", function () {
+      if (!checkInInput.value) return;
+      const d = new Date(checkInInput.value + "T12:00:00");
+      d.setDate(d.getDate() + 1);
+      const min = formatTanggalInput(d);
+      checkOutInput.min = min;
+      if (checkOutInput.value && checkOutInput.value < min) checkOutInput.value = "";
+    });
+
+    // ---------- 3. Data tampilan kamar (konten statis; harga/kapasitas dari server) ----------
+    const dataKamar = {
+      "Standard Room": {
+        harga: 300000, kapasitas: 2,
+        gambar: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=900&q=80",
+        deskripsi: "Kamar nyaman dengan suasana hangat dan tata ruang praktis. Cocok untuk perjalanan singkat maupun kebutuhan bisnis.",
+        tempatTidur: "1 Double Bed",
+        fasilitas: ["Wi-Fi Gratis", "AC", "TV", "Kamar Mandi", "Meja Kerja", "Air Mineral"],
+        fotoTambahan: ["https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1587985064135-0366536eab42?auto=format&fit=crop&w=900&q=80"]
+      },
+      "Deluxe Room": {
+        harga: 450000, kapasitas: 2,
+        gambar: "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80",
+        deskripsi: "Nikmati ruang yang lebih luas dengan desain modern, pencahayaan hangat, dan suasana elegan. Cocok untuk pasangan atau tamu bisnis.",
+        tempatTidur: "1 King Bed",
+        fasilitas: ["Wi-Fi Gratis", "AC", "TV", "Kamar Mandi", "Mini Bar", "Brankas", "Meja Kerja", "Pemandangan Kota", "Air Mineral"],
+        fotoTambahan: ["https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80"]
+      },
+      "Family Room": {
+        harga: 700000, kapasitas: 4,
+        gambar: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=900&q=80",
+        deskripsi: "Kamar keluarga yang luas dan nyaman untuk beristirahat bersama. Cocok untuk keluarga atau kelompok kecil yang membutuhkan ruang lebih.",
+        tempatTidur: "2 Double Bed",
+        fasilitas: ["Wi-Fi Gratis", "AC", "TV", "Kamar Mandi", "Mini Bar", "Brankas", "Meja Kerja", "Sofa", "Air Mineral"],
+        fotoTambahan: ["https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=900&q=80", "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=900&q=80"]
+      }
+    };
+
+    function formatRupiah(n) {
+      return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(n);
+    }
+    function hitungMalam(masuk, keluar) {
+      if (!masuk || !keluar || keluar <= masuk) return 0;
+      return Math.round((new Date(keluar + "T12:00:00") - new Date(masuk + "T12:00:00")) / 86400000);
+    }
+    function formatTanggalIndonesia(v) {
+      if (!v) return "-";
+      return new Date(v + "T12:00:00").toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+    }
+    function formatWaktu(iso) {
+      if (!iso) return "-";
+      return new Date(iso).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short", timeZone: "Asia/Jakarta" }) + " WIB";
+    }
+
+    // ---------- 4. Sinkron harga/ketersediaan dari server ----------
+    function cardOf(type) {
+      return Array.from(document.querySelectorAll(".room-card")).find(function (c) {
+        const h = c.querySelector("h3");
+        return h && h.textContent.trim() === type;
+      });
+    }
+    function updateCard(type, info) {
+      const card = cardOf(type);
+      if (!card) return;
+      const priceEl = card.querySelector(".price");
+      if (priceEl && info.price > 0) priceEl.innerHTML = formatRupiah(info.price) + " <small>per malam</small>";
+      const cap = card.querySelector("[data-cap-slot]");
+      if (cap && info.capacity) cap.textContent = "♙ " + info.capacity + " tamu";
+      const count = card.querySelector("[data-count-for]");
+      if (count) { count.classList.remove("loading-note"); count.textContent = info.countText; }
+      const badge = card.querySelector("[data-status-for]");
+      if (badge) {
+        badge.className = "room-status " + (info.state === "ok" ? "status-available" : info.state === "full" ? "status-full" : "status-maintenance");
+        badge.textContent = "● " + (info.state === "ok" ? "Tersedia" : info.state === "full" ? "Penuh" : "Perawatan");
+      }
+      const btn = card.querySelector(".book-button");
+      if (btn) {
+        btn.disabled = info.state !== "ok";
+        btn.textContent = info.state === "ok" ? "Pilih Kamar" : (info.state === "full" ? "Tidak tersedia" : "Kamar Perawatan");
+        btn.style.opacity = info.state === "ok" ? "1" : ".55";
+      }
+    }
+    function applyTypes(types) {
+      types.forEach(function (t) {
+        const k = dataKamar[t.type];
+        if (!k) return;
+        if (t.price > 0) k.harga = t.price;
+        if (t.capacity > 0) k.kapasitas = t.capacity;
+        updateCard(t.type, {
+          price: t.price, capacity: t.capacity, state: t.status === "Tersedia" ? "ok" : "maint",
+          countText: t.total + " kamar"
+        });
+      });
+      sesuaikanKapasitasTamu();
+    }
+    function applyAvailability(res) {
+      res.types.forEach(function (t) {
+        const k = dataKamar[t.type];
+        if (!k) return;
+        if (t.price > 0) k.harga = t.price;
+        updateCard(t.type, {
+          price: t.price, capacity: t.capacity, state: t.available > 0 ? "ok" : "full",
+          countText: t.available > 0 ? t.available + " kamar tersedia untuk tanggal Anda" : "Tidak tersedia untuk tanggal Anda"
+        });
+      });
+      perbaruiRingkasan();
+    }
+    call("getPublicRooms").then(function (r) { applyTypes(r.types); }).catch(function (e) {
+      searchNotice.textContent = "Data kamar terbaru belum dapat dimuat: " + e.message;
+      searchNotice.classList.add("show");
+      document.querySelectorAll("[data-count-for]").forEach(function (s) { s.classList.remove("loading-note"); s.textContent = ""; });
+    });
+
+    // ---------- 5. Pencarian ketersediaan ----------
+    const searchForm = $("searchForm");
+    const searchNotice = $("searchNotice");
+    const bookingForm = $("bookingForm");
+    const bookingRoom = $("bookingRoom");
+    const bookingCheckIn = $("bookingCheckIn");
+    const bookingCheckOut = $("bookingCheckOut");
+    const bookingGuests = $("bookingGuests");
+    const bookingError = $("bookingError");
+
+    searchForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const ci = checkInInput.value, co = checkOutInput.value, g = Number($("guests").value);
+      if (!ci || !co || co <= ci) {
+        searchNotice.textContent = "Pilih tanggal check-in dan check-out yang benar.";
+        searchNotice.classList.add("show");
+        return;
+      }
+      const btn = searchForm.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Memeriksa…";
+      call("checkAvailability", ci, co, g).then(function (res) {
+        applyAvailability(res);
+        bookingCheckIn.value = ci; bookingCheckOut.value = co; bookingGuests.value = String(g);
+        sesuaikanKapasitasTamu();
+        const ada = res.types.filter(function (t) { return t.available > 0; }).length;
+        searchNotice.textContent = ada
+          ? "Ketersediaan untuk " + formatTanggalIndonesia(ci) + " – " + formatTanggalIndonesia(co) + " (" + res.nights + " malam, " + g + " tamu) sudah diperbarui di daftar kamar."
+          : "Maaf, semua kamar penuh untuk tanggal tersebut. Coba tanggal lain.";
+        searchNotice.classList.add("show");
+        scrollToId("kamar");
+      }).catch(function (e) {
+        searchNotice.textContent = e.message;
+        searchNotice.classList.add("show");
+      }).then(function () { btn.disabled = false; btn.textContent = "Cek Kamar"; });
+    });
+
+    // ---------- 6. Detail kamar ----------
+    function bukaDetailKamar(nama) {
+      const k = dataKamar[nama];
+      if (!k) return;
+      $("detailRoomName").textContent = nama;
+      $("detailMainPhoto").src = k.gambar;
+      $("detailMainPhoto").alt = "Foto " + nama;
+      $("detailSidePhotoOne").src = k.fotoTambahan[0];
+      $("detailSidePhotoTwo").src = k.fotoTambahan[1];
+      $("detailRoomDescription").textContent = k.deskripsi;
+      $("detailCapacity").textContent = "♙ Maksimal " + k.kapasitas + " tamu";
+      $("detailBed").textContent = "▣ " + k.tempatTidur;
+      $("detailRoomPrice").textContent = formatRupiah(k.harga);
+      $("detailCapacityShort").textContent = k.kapasitas + " tamu";
+      $("detailBedShort").textContent = k.tempatTidur;
+      const daftar = $("detailAmenities");
+      daftar.replaceChildren();
+      k.fasilitas.forEach(function (f) {
+        const item = document.createElement("div");
+        item.className = "amenity-item";
+        item.textContent = "✧  " + f;
+        daftar.appendChild(item);
+      });
+      $("kamar").hidden = true;
+      $("roomDetailPage").hidden = false;
+      $("form-booking").hidden = true;
+      $("statusSection").hidden = true;
+      $("keunggulan").hidden = true;
+      scrollToId("roomDetailPage");
+      setHash("#detail-kamar");
+    }
+    $("backToRooms").addEventListener("click", function (event) {
+      event.preventDefault();
+      $("roomDetailPage").hidden = true;
+      $("kamar").hidden = false;
+      $("keunggulan").hidden = false;
+      scrollToId("kamar");
+      setHash("#kamar");
+    });
+    document.querySelectorAll(".room-detail-button").forEach(function (b) {
+      b.addEventListener("click", function () { bukaDetailKamar(b.dataset.detailRoom); });
+    });
+    $("detailBookButton").addEventListener("click", function () {
+      pilihKamar($("detailRoomName").textContent);
+      $("roomDetailPage").hidden = true;
+      $("kamar").hidden = false;
+      $("keunggulan").hidden = false;
+    });
+
+    // ---------- 7. Form pemesanan ----------
+    function perbaruiRingkasan() {
+      const k = dataKamar[bookingRoom.value];
+      const malam = hitungMalam(bookingCheckIn.value, bookingCheckOut.value);
+      $("summaryRoomName").textContent = bookingRoom.value;
+      $("summaryRoomImage").src = k.gambar;
+      $("summaryRoomImage").alt = "Foto " + bookingRoom.value;
+      $("summaryRoomDescription").textContent = k.deskripsi;
+      $("summaryRoomPrice").textContent = formatRupiah(k.harga);
+      $("summaryNights").textContent = malam + " malam";
+      $("summaryTotal").textContent = formatRupiah(k.harga * malam);
+    }
+    function sesuaikanKapasitasTamu() {
+      const kap = dataKamar[bookingRoom.value].kapasitas;
+      Array.from(bookingGuests.options).forEach(function (o) { o.disabled = Number(o.value) > kap; });
+      if (Number(bookingGuests.value) > kap) bookingGuests.value = String(kap);
+      perbaruiRingkasan();
+    }
+    function pilihKamar(nama) {
+      bookingRoom.value = nama;
+      sesuaikanKapasitasTamu();
+      $("statusSection").hidden = true;
+      $("form-booking").hidden = false;
+      showError(bookingError, "");
+      scrollToId("form-booking");
+    }
+    bookingCheckIn.min = tanggalHariIni;
+    bookingCheckOut.min = tanggalHariIni;
+    bookingCheckIn.addEventListener("change", function () {
+      if (!bookingCheckIn.value) return;
+      const d = new Date(bookingCheckIn.value + "T12:00:00");
+      d.setDate(d.getDate() + 1);
+      const min = formatTanggalInput(d);
+      bookingCheckOut.min = min;
+      if (bookingCheckOut.value && bookingCheckOut.value < min) bookingCheckOut.value = min;
+      perbaruiRingkasan();
+    });
+    bookingCheckOut.addEventListener("change", perbaruiRingkasan);
+    bookingRoom.addEventListener("change", sesuaikanKapasitasTamu);
+    bookingGuests.addEventListener("change", perbaruiRingkasan);
+    document.querySelectorAll(".book-button").forEach(function (b) {
+      b.addEventListener("click", function () { pilihKamar(b.dataset.room); });
+    });
+
+    bookingForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      showError(bookingError, "");
+      const nama = $("guestName").value.trim();
+      const telepon = $("guestPhone").value.trim();
+      const email = $("guestEmail").value.trim();
+      const masuk = bookingCheckIn.value, keluar = bookingCheckOut.value;
+      const tamu = Number(bookingGuests.value);
+      const k = dataKamar[bookingRoom.value];
+      const malam = hitungMalam(masuk, keluar);
+
+      let err = "";
+      if (nama.length < 2) err = "Masukkan nama lengkap yang benar.";
+      else if (!/^[+0-9()\-\s]{8,20}$/.test(telepon)) err = "Masukkan nomor WhatsApp yang valid (minimal 8 angka).";
+      else if (!masuk || !keluar || malam < 1) err = "Tanggal check-out harus minimal satu hari setelah check-in.";
+      else if (tamu > k.kapasitas) err = "Jumlah tamu melebihi kapasitas kamar. Silakan pilih kamar lain.";
+      if (err) { showError(bookingError, err); return; }
+
+      const btn = bookingForm.querySelector(".booking-submit");
+      const label = btn.innerHTML;
+      btn.disabled = true; btn.textContent = "Memproses…";
+      call("createBooking", { name: nama, phone: telepon, email: email, type: bookingRoom.value, checkIn: masuk, checkOut: keluar, guests: tamu })
+        .then(function (res) {
+          renderPanel(res.booking, true);
+          $("form-booking").hidden = true;
+          $("statusSection").hidden = false;
+          scrollToId("statusSection");
+        })
+        .catch(function (e) { showError(bookingError, e.message); })
+        .then(function () { btn.disabled = false; btn.innerHTML = label; });
+    });
+
+    // ---------- 8. Panel status & pembayaran ----------
+    let current = null; // { code, phone }
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+    function pill(text, kind) { return el("span", "pill " + (kind || ""), text); }
+    function kindOf(s) {
+      return ["Lunas", "Dikonfirmasi", "Selesai"].indexOf(s) >= 0 ? "ok" : ["Ditolak", "Dibatalkan"].indexOf(s) >= 0 ? "bad" : s === "Menunggu Verifikasi" ? "wait" : "";
+    }
+
+    function renderPanel(b, isNew) {
+      current = { code: b.code, phone: b.phone };
+      const p = $("bookingPanel");
+      p.replaceChildren();
+
+      if (isNew) p.appendChild(el("div", "confirmation-icon", "✓"));
+      p.appendChild(el("span", "eyebrow", isNew ? "Booking berhasil dibuat" : "Status booking"));
+      p.appendChild(el("h2", "", isNew ? "Terima kasih, " + b.name + "!" : "Booking " + b.code));
+      p.appendChild(el("p", "", isNew ? "Simpan kode booking ini. Selesaikan pembayaran sebelum batas waktu agar kamar Anda terjamin." : "Berikut informasi terbaru pemesanan Anda."));
+
+      const codeBox = el("div", "confirmation-code");
+      codeBox.appendChild(el("span", "", "Kode Booking"));
+      codeBox.appendChild(el("strong", "", b.code));
+      p.appendChild(codeBox);
+
+      const pills = el("div");
+      pills.appendChild(pill("Pembayaran: " + b.payment, kindOf(b.payment)));
+      pills.appendChild(pill("Booking: " + b.status, kindOf(b.status)));
+      p.appendChild(pills);
+
+      const grid = el("div", "confirmation-details");
+      grid.style.marginTop = "18px";
+      [["Nama Tamu", b.name], ["WhatsApp", b.phone], ["Email", b.email || "Tidak diisi"],
+       ["Check-in", formatTanggalIndonesia(b.checkin)], ["Check-out", formatTanggalIndonesia(b.checkout)],
+       ["Tipe Kamar", b.type], ["Jumlah Tamu", b.guests + " orang"],
+       ["Total (" + b.nights + " malam)", formatRupiah(b.total)]].forEach(function (r) {
+        const d = el("div", "detail-item");
+        d.appendChild(el("span", "", r[0]));
+        d.appendChild(el("strong", "", r[1]));
+        grid.appendChild(d);
+      });
+      p.appendChild(grid);
+
+      // Pesan sesuai status
+      if (b.payment === "Ditolak" && b.note) {
+        p.appendChild(el("div", "panel-msg err", "Bukti transfer sebelumnya ditolak: " + b.note + ". Silakan unggah bukti yang benar."));
+      }
+      if (b.canUpload) p.appendChild(buildPayBox(b));
+      else if (b.payment === "Menunggu Verifikasi") {
+        p.appendChild(el("div", "panel-msg", "Bukti transfer Anda sudah kami terima dan sedang diverifikasi oleh hotel. Cek kembali status ini nanti."));
+      } else if (b.status === "Dikonfirmasi") {
+        p.appendChild(el("div", "panel-msg", "Pembayaran terverifikasi dan booking Anda dikonfirmasi. Check-in mulai pukul 14.00. Sampai jumpa!"));
+      } else if (b.status === "Dibatalkan") {
+        p.appendChild(el("div", "panel-msg err", "Booking ini dibatalkan." + (b.note ? " " + b.note : "")));
+      } else if (b.status === "Selesai") {
+        p.appendChild(el("div", "panel-msg", "Terima kasih telah menginap di Grand Hotel."));
+      }
+
+      const actions = el("div", "confirmation-actions");
+      const copy = el("button", "btn", "Salin Kode Booking"); copy.type = "button";
+      copy.addEventListener("click", function () {
+        const done = function () { copy.textContent = "Kode Berhasil Disalin"; };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(b.code).then(done, function () { window.prompt("Salin kode booking berikut:", b.code); });
+        else window.prompt("Salin kode booking berikut:", b.code);
+      });
+      const refresh = el("button", "btn btn-outline", "Muat Ulang Status"); refresh.type = "button";
+      refresh.addEventListener("click", function () {
+        refresh.disabled = true;
+        call("getBooking", current.code, current.phone).then(function (r) { renderPanel(r.booking, false); })
+          .catch(function (e) { panelMessage(e.message, true); refresh.disabled = false; });
+      });
+      actions.append(copy, refresh);
+      if (b.canCancel) {
+        const cancel = el("button", "btn btn-outline", "Batalkan Booking"); cancel.type = "button";
+        cancel.addEventListener("click", function () {
+          if (!window.confirm("Batalkan booking " + b.code + "? Tindakan ini tidak dapat dibatalkan.")) return;
+          cancel.disabled = true;
+          call("cancelBooking", current.code, current.phone).then(function (r) { renderPanel(r.booking, false); })
+            .catch(function (e) { panelMessage(e.message, true); cancel.disabled = false; });
+        });
+        actions.appendChild(cancel);
+      }
+      p.appendChild(actions);
+      const msg = el("div", "panel-msg"); msg.id = "panelMsg"; msg.hidden = true;
+      p.appendChild(msg);
+    }
+
+    function panelMessage(text, isErr) {
+      const m = $("panelMsg");
+      if (!m) return;
+      m.hidden = !text; m.textContent = text || "";
+      m.className = "panel-msg" + (isErr ? " err" : "");
+    }
+
+    function buildPayBox(b) {
+      const box = el("div", "pay-box");
+      box.appendChild(el("h3", "", "Instruksi Pembayaran"));
+      if (b.bank && b.bank.configured) {
+        const dl = el("dl");
+        [["Bank", b.bank.name], ["Nomor rekening", b.bank.accountNumber], ["Atas nama", b.bank.accountName || "-"],
+         ["Jumlah transfer", formatRupiah(b.total)], ["Batas waktu", formatWaktu(b.expiresAt)]].forEach(function (r) {
+          dl.appendChild(el("dt", "", r[0]));
+          dl.appendChild(el("dd", "", r[1]));
+        });
+        box.appendChild(dl);
+      } else {
+        box.appendChild(el("p", "", "Nomor rekening belum tersedia di sistem. Silakan hubungi hotel melalui WhatsApp untuk informasi pembayaran. Batas waktu: " + formatWaktu(b.expiresAt) + "."));
+      }
+      box.appendChild(el("p", "summary-note", "Setelah transfer, unggah foto/screenshot bukti transfer (JPG, PNG, atau WEBP). Kamar dikonfirmasi setelah hotel memverifikasi pembayaran. Booking yang tidak dibayar sebelum batas waktu dibatalkan otomatis."));
+      const row = el("div", "upload-row");
+      const file = document.createElement("input");
+      file.type = "file"; file.accept = "image/jpeg,image/png,image/webp"; file.setAttribute("aria-label", "File bukti transfer");
+      const send = el("button", "btn", "Unggah Bukti Transfer"); send.type = "button";
+      send.addEventListener("click", function () {
+        const f = file.files && file.files[0];
+        if (!f) { panelMessage("Pilih file bukti transfer terlebih dahulu.", true); return; }
+        if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { panelMessage("Format file harus JPG, PNG, atau WEBP.", true); return; }
+        send.disabled = true; send.textContent = "Mengunggah…";
+        prepareImage(f).then(function (img) {
+          return call("uploadProof", current.code, current.phone, { name: f.name, mime: img.mime, data: img.data });
+        }).then(function (r) {
+          renderPanel(r.booking, false);
+          panelMessage("Bukti transfer berhasil diunggah. Mohon tunggu verifikasi dari hotel.", false);
+        }).catch(function (e) {
+          panelMessage(e.message, true);
+          send.disabled = false; send.textContent = "Unggah Bukti Transfer";
+        });
+      });
+      row.append(file, send);
+      box.appendChild(row);
+      return box;
+    }
+
+    // Perkecil foto besar dari kamera HP agar di bawah batas 3 MB.
+    function prepareImage(file) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onerror = function () { reject(new Error("File tidak dapat dibaca.")); };
+        reader.onload = function () {
+          const url = String(reader.result);
+          if (file.size <= 1.5 * 1024 * 1024) { resolve({ mime: file.type, data: url.split(",")[1] }); return; }
+          const img = new Image();
+          img.onerror = function () { reject(new Error("Gambar tidak dapat diproses.")); };
+          img.onload = function () {
+            const max = 1600;
+            const scale = Math.min(1, max / Math.max(img.width, img.height));
+            const c = document.createElement("canvas");
+            c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+            c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+            resolve({ mime: "image/jpeg", data: c.toDataURL("image/jpeg", 0.85).split(",")[1] });
+          };
+          img.src = url;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    $("statusBack").addEventListener("click", function (e) {
+      e.preventDefault();
+      $("statusSection").hidden = true;
+      scrollToId("beranda");
+    });
+
+    // ---------- 9. Cek status booking ----------
+    $("lookupForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const err = $("lookupError");
+      showError(err, "");
+      const btn = $("lookupBtn");
+      btn.disabled = true; btn.textContent = "Memeriksa…";
+      call("getBooking", $("lookupCode").value, $("lookupPhone").value).then(function (r) {
+        renderPanel(r.booking, false);
+        $("form-booking").hidden = true;
+        $("statusSection").hidden = false;
+        scrollToId("statusSection");
+      }).catch(function (ex) { showError(err, ex.message); })
+        .then(function () { btn.disabled = false; btn.textContent = "Cek Status"; });
+    });
+
+    perbaruiRingkasan();
+
+</script>
+</body>
+</html>
